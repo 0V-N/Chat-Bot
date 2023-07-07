@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat App</title>
+  <style>
+    body {
+      position: relative; /* Added to make z-index work */
+      margin: 0;
+      background-color: black;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1; /* Increased z-index to appear behind the chat container */
+    }
+
+    #chatContainer {
+      position: relative; /* Added to make z-index work */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      z-index: 2; /* Increased z-index to allow interaction */
+    }
+
+    h1 {
+      text-align: center;
+      color: #00FF00;
+    }
+
+    #messageInput {
+      background-color: black;
+      color: #00FF00; /* Terminal green color */
+    }
+
+    #responseContainer p {
+      color: #00FF00; /* Terminal green color */
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div id="chatContainer">
+    <h1>Not Named</h1>
+
+    <input type="text" id="messageInput" placeholder="Enter your message">
+    <button onclick="sendMessage()">Send</button>
+
+    <div id="responseContainer"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+  <script type="text/javascript">
+    particlesJS("particles-js", {
+      particles: {
+        number: {
+          value: 80,
+          density: {
+            enable: true,
+            value_area: 800
+          }
+        },
+        color: {
+          value: "#00ff00"
+        },
+        shape: {
+          type: "circle",
+          stroke: {
+            width: 0,
+            color: "#000000"
+          },
+          polygon: {
+            nb_sides: 5
+          }
+        },
+        opacity: {
+          value: 0.5,
+          random: false,
+          anim: {
+            enable: false,
+            speed: 1,
+            opacity_min: 0.1,
+            sync: false
+          }
+        },
+        size: {
+          value: 3,
+          random: true,
+          anim: {
+            enable: false,
+            speed: 40,
+            size_min: 0.1,
+            sync: false
+          }
+        },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#00ff00",
+          opacity: 0.4,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 6,
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out",
+          bounce: false,
+          attract: {
+            enable: false,
+            rotateX: 600,
+            rotateY: 1200
+          }
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: {
+            enable: true,
+            mode: "repulse"
+          },
+          onclick: {
+            enable: true,
+            mode: "push"
+          },
+          resize: true
+        },
+        modes: {
+          grab: {
+            distance: 400,
+            line_linked: {
+              opacity: 1
+            }
+          },
+          bubble: {
+            distance: 400,
+            size: 40,
+            duration: 2,
+            opacity: 8,
+            speed: 3
+          },
+          repulse: {
+            distance: 100,
+            duration: 0.4
+          },
+          push: {
+            particles_nb: 4
+          },
+          remove: {
+            particles_nb: 2
+          }
+        }
+      },
+      retina_detect: true
+    });
+
+    // Get the message input element
+    const messageInput = document.getElementById('messageInput');
+
+    // Add event listener for the Enter key press
+    messageInput.addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    });
+
+    function sendMessage() {
+      const message = { message: messageInput.value };
+
+      fetch('http://127.0.0.1:5000/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(message)
+      })
+      .then(response => response.text())
+      .then(data => {
+        console.log(data);
+        displayResponse(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+      // Clear the input field
+      messageInput.value = '';
+    }
+
+    function displayResponse(response) {
+      const responseContainer = document.getElementById('responseContainer');
+
+      // Clear previous response
+      responseContainer.innerHTML = '';
+
+      // Create a new paragraph element for the response
+      const responseParagraph = document.createElement('p');
+      responseParagraph.innerText = response;
+
+      // Apply terminal green color to the response text
+      responseParagraph.style.color = '#00FF00'; // Terminal green color
+
+      // Append the response to the response container
+      responseContainer.appendChild(responseParagraph);
+    }
+  </script>
+</body>
+</html>
