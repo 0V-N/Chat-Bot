@@ -1,6 +1,6 @@
 [build]
   command = "python3 app.py"
-  publish = "Chat-Bot/"
+  publish = "Chat-Bot/compare/master"
 
 [[plugins]]
   package = "netlify-plugin-inline-source"
