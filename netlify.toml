@@ -1,0 +1,12 @@
+[build]
+  command = "python3 app.py"
+  publish = "Chat-Bot/"
+
+[[plugins]]
+  package = "netlify-plugin-inline-source"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[context.production.environment]
+  OPENAI_API_KEY = "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"
